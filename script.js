@@ -41,7 +41,7 @@ function level1Register() {
   button.className = "next";
   level1Images.forEach((img) => {
     let imgElement = document.createElement("img");
-    imgElement.src = `images/${img}`;
+    imgElement.src = `./images/${img}`;
     imgElement.onclick = () => {
       selectedImage = img;
       // Remove "selected" class from all images
@@ -232,7 +232,7 @@ function submit() {
 
     // Redirect to index.html after 5 sec
     setTimeout(() => {
-      window.location.href = "index.html";
+      window.location.href = "./index.html";
     }, 3000);
   } else {
     let registeredUsers = JSON.parse(localStorage.getItem("userData")) || [];
@@ -257,7 +257,7 @@ function submit() {
     
         // Redirect after 3 seconds
         setTimeout(() => {
-          window.location.href = "dashboard.html"; // Change to your desired page
+          window.location.href = "./dashboard.html"; // Change to your desired page
         }, 3000);
       } else {
         // ❌ Invalid Credentials
@@ -270,7 +270,7 @@ function submit() {
         });
         // Redirect after 3 seconds
         setTimeout(() => {
-            window.location.href = "index.html"; // Change to your desired page
+            window.location.href = "./index.html"; // Change to your desired page
           }, 3000);
       }
   }
