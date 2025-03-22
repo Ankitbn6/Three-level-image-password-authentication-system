@@ -11,12 +11,43 @@ const level2Images = [
   "grid8",
   "grid9",
 ]; // Different image for grid selection
-var Data = JSON.parse(localStorage.getItem("userData")) || [];
+const secretKey = "nfnkafie447dfasjdks7879"; // Change this to a strong, unique key
+
 let username = "";
 let level1 = "";
 let level2 = "";
 let level3 = [];
 let registration = false;
+// 🔒 Encrypt Data
+function encryptData(data) {
+  return CryptoJS.AES.encrypt(JSON.stringify(data), secretKey).toString();
+}
+
+// 🔓 Decrypt Data
+function decryptData(ciphertext) {
+  try {
+      if (!ciphertext || ciphertext.trim() === "") {
+          console.warn("No encrypted data found!");
+          return [];
+      }
+
+      const bytes = CryptoJS.AES.decrypt(ciphertext, secretKey);
+      const decryptedText = bytes.toString(CryptoJS.enc.Utf8);
+
+      if (!decryptedText) throw new Error("Decryption failed! Data might be incorrect.");
+
+      console.log("Decrypted Data:", decryptedText); // ✅ Debugging
+
+      return JSON.parse(decryptedText);
+  } catch (error) {
+      console.error("Decryption Error:", error);
+      return []; // Prevent crashes
+  }
+}
+
+let encryptedUsers = localStorage.getItem("userData");
+let Data = encryptedUsers ? decryptData(encryptedUsers) : [];
+// var Data = JSON.parse(localStorage.getItem("userData")) || [];
 function register() {
   registration = true;
   level1Register();
@@ -127,7 +158,7 @@ function level3Register() {
 
   // Create image container div dynamically
   let label = document.createElement("h3");
-  label.innerHTML = "Rearrange and memorise the order";
+  label.innerHTML = (registration)?"Rearrange and memorise the order":"Arrange images in saved order";
   const imageContainer = document.createElement("div");
   imageContainer.id = "imageContainer";
   let button = document.createElement("button");
@@ -240,7 +271,9 @@ function submit() {
   };
   if (registration) {
     Data.push(userObj);
-    localStorage.setItem("userData", JSON.stringify(Data));
+    // localStorage.setItem("userData", JSON.stringify(Data));
+    const encryptedData = encryptData(Data);
+    localStorage.setItem("userData", encryptedData);
     // sweet alert
     Swal.fire({
       title: "Success!",
@@ -257,8 +290,9 @@ function submit() {
       window.location.href = "./index.html";
     }, 3000);
   } else {
-    let registeredUsers = JSON.parse(localStorage.getItem("userData")) || [];
-
+    // let registeredUsers = JSON.parse(localStorage.getItem("userData")) || [];
+    let encryptedUsers = localStorage.getItem("userData");
+    let registeredUsers = encryptedUsers ? decryptData(encryptedUsers) : [];
     // Find user with matching credentials
     const user = registeredUsers.find(
       (u) =>
