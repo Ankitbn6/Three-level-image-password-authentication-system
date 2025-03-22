@@ -168,11 +168,33 @@ function enableDragAndDrop() {
       draggedItem = null;
       logNewOrder();
     });
+
+    // 🟢 Mobile Support (Touch Events)
+    img.addEventListener("touchstart", (e) => {
+      draggedItem = img;
+      img.classList.add("dragging");
+      e.preventDefault();
+    });
+
+    img.addEventListener("touchend", () => {
+      draggedItem.classList.remove("dragging");
+      draggedItem = null;
+      logNewOrder();
+    });
+
+    img.addEventListener("touchmove", (e) => {
+      const touch = e.touches[0];
+      const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+
+      if (elementBelow && elementBelow.classList.contains("draggable")) {
+        container.insertBefore(draggedItem, elementBelow);
+      }
+    });
   });
 
   container.addEventListener("dragover", (e) => {
     e.preventDefault();
-    const afterElement = getDragAfterElement(container, e.clientY);
+    const afterElement = getDragAfterElement(container, e.clientX);
     if (afterElement == null) {
       container.appendChild(draggedItem);
     } else {
